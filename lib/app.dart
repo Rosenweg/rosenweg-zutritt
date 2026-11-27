@@ -14,8 +14,8 @@ const appAngaben = RosenwegApp(
   beschreibung: 'Türen, Access-Benutzer, Besucher-Pässe und Rosenweg-Karten verwalten; Zutritts- und Kartenprotokoll.',
   quelle: 'https://github.com/Rosenweg/rosenweg-zutritt',
   logo: AssetImage('assets/logo/rosenweg-zutritt-512.png'),
-  // Anmeldeschirm in Technik-Gruen: `gruppe: RosenwegGruppe.technik`, sobald
-  // rosenweg_basis v0.6.1 getaggt ist (basis#22); bis dahin blau.
+  // Anmeldeschirm in Technik-Gruen (ab rosenweg_basis 0.6.1)
+  gruppe: RosenwegGruppe.technik,
 );
 
 /// --dart-define=RW_ATTRAPPE=1: ohne Anmeldung und ohne Server, mit

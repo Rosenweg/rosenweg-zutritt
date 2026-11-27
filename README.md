@@ -73,8 +73,6 @@ Zutritt installieren und Karten von Hand deinstallieren (Stefan). Über das Repo
 
 ## Noch offen
 
-- Anmeldeschirm in Technik-Grün: `gruppe: RosenwegGruppe.technik` in `lib/app.dart`
-  eintragen, sobald rosenweg_basis v0.6.1 getaggt ist (basis#22). Bis dahin blau.
 - Logo-Zeichen (Schlüssel mit Karte): aus basis#24; die Symbole hier sind damit erzeugt.
 
 ## Entwickeln
