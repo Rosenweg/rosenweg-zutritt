@@ -5,7 +5,7 @@ publish_to: 'none'
 # version: x.y.z+Baunummer. Ein Merge auf main mit einer NEUEN Version (Tag
 # vx.y.z gibt es noch nicht) baut alle Plattformen und veroeffentlicht sie
 # (GitHub-Release, /apps). Unveraenderte Version = nur CI, kein Release.
-version: 0.1.0+1
+version: 1.0.0+1
 
 environment:
   sdk: ^3.13.4

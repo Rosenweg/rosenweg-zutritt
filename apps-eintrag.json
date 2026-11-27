@@ -1,12 +1,12 @@
 {
-  "_hinweis": "Eintrag fuer das App-Register (Rosenweg/Website apps-register.json, Abschnitt 'apps', Schluessel = 'app'). Erst damit nimmt die Anlage Releases dieses Repos an. Logo: assets/logo/rosenweg-zutritt-192.png nach www img/apps/rosenweg-zutritt.png.",
+  "_hinweis": "Eintrag fuer das App-Register (Rosenweg/Website apps-register.json, Abschnitt 'apps', Schluessel = 'app'). Erst damit nimmt die Anlage Releases dieses Repos an. Logo: assets/logo/rosenweg-zutritt-192.png nach www img/apps/rosenweg-zutritt.png. Ersetzt den Eintrag 'karten' (Rosenweg Karten wird aufgegeben, 27.11.2026).",
   "app": "zutritt",
   "name": "Rosenweg Zutritt",
   "repo": "Rosenweg/rosenweg-zutritt",
   "paket": "ch.rosenweg4303.zutritt",
   "logo": "/img/apps/rosenweg-zutritt.png",
-  "reihenfolge": 100,
-  "text": "Türen, Access-Benutzer, Besucher-Pässe und Rosenweg-Karten verwalten; Zutritts- und Kartenprotokoll.",
-  "fuer": "",
+  "reihenfolge": 50,
+  "text": "Türen, Access-Benutzer, Besucher-Pässe und Rosenweg-Karten verwalten (Karte nachschlagen, zuordnen, am UniFi-Leser anlernen); Zutritts- und Kartenprotokoll, Karten-Anmeldungen der Apps. Ersetzt Rosenweg Karten.",
+  "fuer": "Für die Technik und den Präsidenten.",
   "technik": true
 }

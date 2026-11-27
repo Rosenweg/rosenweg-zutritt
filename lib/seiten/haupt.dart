@@ -2,57 +2,106 @@
 import 'package:flutter/material.dart';
 import 'package:rosenweg_basis/rosenweg_basis.dart';
 
-import 'eintraege.dart';
+import '../zutritt_api.dart';
+import 'anmeldungen.dart';
+import 'besucher.dart';
+import 'karte.dart';
+import 'personen.dart';
+import 'protokoll.dart';
 
-/// Die App nach der Anmeldung. Das Geruest aus rosenweg_basis legt die
-/// Bereiche ([GeruestZiel]) auf dem Handy unten und am Desktop (ab 840 px,
-/// Stationen, Laptops) links als Leiste ab; der Inhalt bleibt am Desktop
-/// mittig begrenzt.
+/// Die App nach der Anmeldung: nur fuer Technik und Praesident (wie die
+/// Haupt-API prueft). Fuenf Bereiche – auf dem Handy unten, am Computer links:
 ///
-/// Hier die eigenen Bereiche eintragen. Die Vorlage zeigt drei: eine
-/// Uebersicht, "Einträge" (Bausteine Liste, Formular, Rechte – siehe
-/// eintraege.dart) und "Mein Konto" (GET /api/auth/me, als Beispiel fuer
-/// einen API-Aufruf mit Laden, Fehler und Nochmals).
-class Haupt extends StatelessWidget {
-  const Haupt({super.key, required this.sitzung});
+///  * Karte: Karte hinhalten bzw. auflegen → wem gehoert sie; zuordnen,
+///    entziehen, aus dem Bestand loeschen (vormals Rosenweg Karten)
+///  * Personen: Benutzer in UniFi Access – Angaben und PIN, Karten (am
+///    UniFi-Leser anlernen oder mit diesem Geraet lesen), Zugangsregeln
+///  * Besucher: Besucher-Paesse mit Zeitraum und Tueren
+///  * Protokoll: Zutritte, Tueren (Stand, oeffnen), Kartenprotokoll
+///  * Anmeldungen: Karten-, QR- und Handy-Anmeldungen der Apps aller
+///    Personen, einzeln oder je Person abmelden
+class Haupt extends StatefulWidget {
+  const Haupt({super.key, required this.sitzung, this.leser});
   final RosenwegSitzung sitzung;
+
+  /// Fuer Tests und Bildschirmfotos; sonst der Leser der Plattform (NFC, PC/SC).
+  final Kartenleser? leser;
+
+  @override
+  State<Haupt> createState() => _HauptState();
+}
+
+class _HauptState extends State<Haupt> {
+  late final ZutrittApi _api = ZutrittApi(widget.sitzung.api);
+
+  @override
+  void initState() {
+    super.initState();
+    // nach dem ersten Bau (laden meldet sofort "laedt")
+    WidgetsBinding.instance.addPostFrameCallback((_) => widget.sitzung.rechte.laden().ignore());
+  }
 
   @override
   Widget build(BuildContext context) {
-    final app = sitzung.app;
-    return RosenwegGeruest(
-      titel: Text(app.name),
-      logo: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Image.asset('assets/logo/rosenweg-zutritt-klein.png', semanticLabel: 'Logo'),
-      ),
-      aktionen: [_Menue(sitzung: sitzung)],
-      ziele: [
-        GeruestZiel(
-          titel: 'Übersicht',
-          symbol: Icons.home_outlined,
-          gewaehltSymbol: Icons.home,
-          seite: (_) => UebersichtSeite(sitzung: sitzung),
-        ),
-        GeruestZiel(
-          titel: 'Einträge',
-          symbol: Icons.list_alt_outlined,
-          gewaehltSymbol: Icons.list_alt,
-          seite: (_) => EintraegeSeite(sitzung: sitzung),
-        ),
-        GeruestZiel(
-          titel: 'Mein Konto',
-          symbol: Icons.person_outline,
-          gewaehltSymbol: Icons.person,
-          seite: (_) => KontoSeite(api: sitzung.api),
-        ),
-      ],
+    final s = widget.sitzung;
+    return ListenableBuilder(
+      listenable: s.rechte,
+      builder: (context, _) {
+        final r = s.rechte.stand;
+        final Widget? sperre = r == null
+            ? (s.rechte.fehler != null
+                ? FehlerAnzeige.aus(s.rechte.fehler!, nochmals: () => s.rechte.laden(neu: true))
+                : const LadeAnzeige())
+            : !r.alles
+                ? const KeineBerechtigungAnzeige(text: 'Rosenweg Zutritt ist nur für Technik und Präsident.')
+                : null;
+        return RosenwegGeruest(
+          titel: Text(s.app.name),
+          logo: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Image.asset('assets/logo/rosenweg-zutritt-klein.png', semanticLabel: 'Logo'),
+          ),
+          aktionen: [_Menue(sitzung: s)],
+          ziele: [
+            GeruestZiel(
+              titel: 'Karte',
+              symbol: Icons.contactless_outlined,
+              gewaehltSymbol: Icons.contactless,
+              seite: (_) => sperre ?? KarteSeite(karten: _api, leser: widget.leser),
+            ),
+            GeruestZiel(
+              titel: 'Personen',
+              symbol: Icons.people_outline,
+              gewaehltSymbol: Icons.people,
+              seite: (_) => sperre ?? PersonenSeite(api: _api, leser: widget.leser),
+            ),
+            GeruestZiel(
+              titel: 'Besucher',
+              symbol: Icons.badge_outlined,
+              gewaehltSymbol: Icons.badge,
+              seite: (_) => sperre ?? BesucherSeite(api: _api),
+            ),
+            GeruestZiel(
+              titel: 'Protokoll',
+              symbol: Icons.history_outlined,
+              gewaehltSymbol: Icons.history,
+              seite: (_) => sperre ?? ProtokollSeite(api: _api),
+            ),
+            GeruestZiel(
+              titel: 'Anmeldungen',
+              symbol: Icons.devices_other_outlined,
+              gewaehltSymbol: Icons.devices_other,
+              seite: (_) => sperre ?? AnmeldungenSeite(api: _api),
+            ),
+          ],
+        );
+      },
     );
   }
 }
 
-/// Menue oben rechts: Anmeldung (echter Stand aus der Basis), Ueber, Abmelden.
-/// Auf geteilten Telefonen meldet Rosenweg Geraet ab, dann gibt es den Punkt nicht.
+/// Menue oben rechts: Anmeldung (echter Stand), Ueber, Abmelden (nicht auf
+/// geteilten Telefonen – dort meldet Rosenweg Geraet ab).
 class _Menue extends StatelessWidget {
   const _Menue({required this.sitzung});
   final RosenwegSitzung sitzung;
@@ -78,84 +127,4 @@ class _Menue extends StatelessWidget {
           if (!sitzung.geteiltesTelefon) const PopupMenuItem(value: 'abmelden', child: Text('Abmelden')),
         ],
       );
-}
-
-class UebersichtSeite extends StatelessWidget {
-  const UebersichtSeite({super.key, required this.sitzung});
-  final RosenwegSitzung sitzung;
-
-  @override
-  Widget build(BuildContext context) => ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Text('Willkommen${sitzung.name != null ? ', ${sitzung.name}' : ''}',
-              style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: 8),
-          Text(sitzung.app.beschreibung),
-          const SizedBox(height: 16),
-          const Hinweis('Hier kommt der Inhalt der App hin. Seiten in lib/seiten/, '
-              'API-Aufrufe über sitzung.api, Vorführdaten in lib/attrappe.dart.'),
-        ],
-      );
-}
-
-/// Beispiel fuer einen API-Aufruf: laden, Fehler mit "Nochmals", Inhalt.
-class KontoSeite extends StatefulWidget {
-  const KontoSeite({super.key, required this.api});
-  final RosenwegApi api;
-
-  @override
-  State<KontoSeite> createState() => _KontoSeiteState();
-}
-
-class _KontoSeiteState extends State<KontoSeite> {
-  Map<String, dynamic>? _ich;
-  Object? _fehler;
-
-  @override
-  void initState() {
-    super.initState();
-    _laden();
-  }
-
-  Future<void> _laden() async {
-    setState(() {
-      _fehler = null;
-      _ich = null;
-    });
-    try {
-      final j = await widget.api.objekt('/api/auth/me');
-      final u = j['user'];
-      if (mounted) setState(() => _ich = u is Map<String, dynamic> ? u : j);
-    } catch (e) {
-      if (mounted) setState(() => _fehler = e);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_fehler != null) return FehlerAnzeige(text: '$_fehler', nochmals: _laden);
-    final ich = _ich;
-    if (ich == null) return const LadeAnzeige();
-    final gruppen = (ich['groups'] as List?)?.join(', ') ?? '';
-    return RefreshIndicator(
-      onRefresh: _laden,
-      child: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Abschnitt(
-            titel: 'Angemeldet als',
-            symbol: Icons.badge_outlined,
-            kind: Column(
-              children: [
-                ListTile(title: const Text('Name'), subtitle: Text('${ich['name'] ?? '–'}')),
-                ListTile(title: const Text('E-Mail'), subtitle: Text('${ich['email'] ?? '–'}')),
-                if (gruppen.isNotEmpty) ListTile(title: const Text('Gruppen'), subtitle: Text(gruppen)),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

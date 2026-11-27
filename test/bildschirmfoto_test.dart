@@ -16,6 +16,8 @@ import 'package:rosenweg_zutritt/app.dart';
 import 'package:rosenweg_zutritt/attrappe.dart';
 import 'package:rosenweg_zutritt/seiten/haupt.dart';
 
+import 'test_leser.dart';
+
 final ziel = Platform.environment['RW_FOTO'];
 
 Future<void> schriften() async {
@@ -48,25 +50,74 @@ void main() {
     if (ziel != null) await schriften();
   });
 
-  Future<void> zeigen(WidgetTester t, Size groesse, {Phase? phase}) async {
+  Future<TestLeser> zeigen(WidgetTester t, Size groesse, {Phase? phase}) async {
     t.view.physicalSize = groesse * 2;
     t.view.devicePixelRatio = 2;
     addTearDown(t.view.reset);
+    await t.pumpWidget(const SizedBox());
+    final l = TestLeser();
     final s = RosenwegSitzung(appAngaben, transport: Attrappe());
     await s.starten();
     if (phase != null) s.phase = phase;
-    await t.pumpWidget(RepaintBoundary(child: RosenwegRahmen(sitzung: s, inhalt: (_) => Haupt(sitzung: s))));
+    await t.pumpWidget(RepaintBoundary(child: RosenwegRahmen(sitzung: s, inhalt: (_) => Haupt(sitzung: s, leser: l))));
     await t.runAsync(() => precacheImage(appAngaben.logo!, t.element(find.byType(MaterialApp))));
     await t.runAsync(() => precacheImage(const AssetImage('assets/logo/rosenweg-zutritt-klein.png'), t.element(find.byType(MaterialApp))));
+    await t.pumpAndSettle();
+    return l;
+  }
+
+  Future<void> auflegen(WidgetTester t, TestLeser l, String uid) async {
+    l.auflegen(uid);
+    await t.pump();
+    await t.pumpAndSettle();
+  }
+
+  Future<void> tippen(WidgetTester t, Finder f) async {
+    await t.tap(f);
     await t.pumpAndSettle();
   }
 
   testWidgets('Fotos', (t) async {
-    await zeigen(t, const Size(412, 860));
-    await foto(t, 'rosenweg-zutritt-handy.png');
-    await zeigen(t, const Size(1200, 800));
-    await foto(t, 'rosenweg-zutritt-station.png');
+    // Handy
+    var l = await zeigen(t, const Size(412, 860));
+    await foto(t, 'rosenweg-zutritt-handy-karte-leer.png');
+    await auflegen(t, l, '04A1B2C3D4E5F6');
+    await foto(t, 'rosenweg-zutritt-handy-karte.png');
+    await tippen(t, find.text('Personen'));
+    await foto(t, 'rosenweg-zutritt-handy-personen.png');
+    await tippen(t, find.text('Erika Muster'));
+    await foto(t, 'rosenweg-zutritt-handy-person.png');
+    t.state<NavigatorState>(find.byType(Navigator).last).pop();
+    await t.pumpAndSettle();
+    await tippen(t, find.text('Besucher'));
+    await foto(t, 'rosenweg-zutritt-handy-besucher.png');
+    await tippen(t, find.text('Protokoll'));
+    await foto(t, 'rosenweg-zutritt-handy-zutritte.png');
+    await tippen(t, find.text('Türen'));
+    await foto(t, 'rosenweg-zutritt-handy-tueren.png');
+
+    // Station (Linux, USB-Leser über PC/SC)
+    RosenwegPlattform.plattformFuerTests = TargetPlatform.linux;
+    addTearDown(() => RosenwegPlattform.plattformFuerTests = null);
+    l = await zeigen(t, const Size(1400, 860));
+    await auflegen(t, l, '04112233445566');
+    await foto(t, 'rosenweg-zutritt-station-karte.png');
+    await tippen(t, find.text('Personen'));
+    await foto(t, 'rosenweg-zutritt-station-personen.png');
+    await tippen(t, find.text('Besucher'));
+    await tippen(t, find.byKey(const Key('neuer-pass')));
+    await foto(t, 'rosenweg-zutritt-station-neuer-pass.png');
+    t.state<NavigatorState>(find.byType(Navigator).last).pop();
+    await t.pumpAndSettle();
+    await tippen(t, find.text('Protokoll'));
+    await tippen(t, find.text('Karten').last);
+    await foto(t, 'rosenweg-zutritt-station-kartenprotokoll.png');
+    await tippen(t, find.text('Anmeldungen'));
+    await foto(t, 'rosenweg-zutritt-station-anmeldungen.png');
+    RosenwegPlattform.plattformFuerTests = null;
+
     await zeigen(t, const Size(412, 860), phase: Phase.abgemeldet);
     await foto(t, 'rosenweg-zutritt-anmelden.png');
+    await t.pumpWidget(const SizedBox());
   }, skip: ziel == null);
 }
