@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <title>Schlüssel mit Ausweiskarte (Rosenweg Zutritt)</title>
+  <!-- eigene Zeichnung (Rosenweg), GPL-3.0-or-later: der Schluessel aus zeichen/zutritt.svg und links unten
+       die NFC-Karte aus zeichen/karten.svg (Rosenweg Karten ist in Zutritt aufgegangen, 27.11.2026) -->
+  <g transform="translate(34 -24)">
+    <path fill-rule="evenodd" d="M136 40 A96 96 0 1 1 135.9 40 Z M136 92 A44 44 0 1 0 136.1 92 Z"/>
+    <g transform="rotate(45 136 136)">
+      <rect x="200" y="114" width="208" height="44" rx="14"/>
+      <rect x="330" y="140" width="40" height="64" rx="10"/>
+      <rect x="270" y="140" width="38" height="48" rx="10"/>
+    </g>
+  </g>
+  <g transform="translate(-4 222) scale(0.54)">
+    <path fill-rule="evenodd" d="M50 74 H350 A34 34 0 0 1 384 108 V302 A34 34 0 0 1 350 336 H50 A34 34 0 0 1 16 302 V108 A34 34 0 0 1 50 74 Z M68 140 H124 A12 12 0 0 1 136 152 V192 A12 12 0 0 1 124 204 H68 A12 12 0 0 1 56 192 V152 A12 12 0 0 1 68 140 Z M71 250 H141 A15 15 0 0 1 156 265 V265 A15 15 0 0 1 141 280 H71 A15 15 0 0 1 56 265 V265 A15 15 0 0 1 71 250 Z M267.1 178.9 A44 44 0 0 1 267.1 241.1 L251.6 225.6 A22 22 0 0 0 251.6 194.4 Z M295.4 150.6 A84 84 0 0 1 295.4 269.4 L279.8 253.8 A62 62 0 0 0 279.8 166.2 Z M323.7 122.3 A124 124 0 0 1 323.7 297.7 L308.1 282.1 A102 102 0 0 0 308.1 137.9 Z" style="fill:#fff;stroke:#fff;stroke-width:44;stroke-linejoin:round"/>
+    <path fill-rule="evenodd" d="M50 74 H350 A34 34 0 0 1 384 108 V302 A34 34 0 0 1 350 336 H50 A34 34 0 0 1 16 302 V108 A34 34 0 0 1 50 74 Z M68 140 H124 A12 12 0 0 1 136 152 V192 A12 12 0 0 1 124 204 H68 A12 12 0 0 1 56 192 V152 A12 12 0 0 1 68 140 Z M71 250 H141 A15 15 0 0 1 156 265 V265 A15 15 0 0 1 141 280 H71 A15 15 0 0 1 56 265 V265 A15 15 0 0 1 71 250 Z M267.1 178.9 A44 44 0 0 1 267.1 241.1 L251.6 225.6 A22 22 0 0 0 251.6 194.4 Z M295.4 150.6 A84 84 0 0 1 295.4 269.4 L279.8 253.8 A62 62 0 0 0 279.8 166.2 Z M323.7 122.3 A124 124 0 0 1 323.7 297.7 L308.1 282.1 A102 102 0 0 0 308.1 137.9 Z"/>
+  </g>
+</svg>

@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Rosenweg Zutritt
+Comment=Türen, Access-Benutzer, Besucher-Pässe und Rosenweg-Karten verwalten; Zutritts- und Kartenprotokoll.
+Exec=rosenweg-zutritt
+# Name im Symbol-Thema (hicolor), kein Pfad.
+Icon=rosenweg-zutritt
+Terminal=false
+# Dateiname = GTK-Anwendungskennung (APPLICATION_ID in linux/CMakeLists.txt).
+StartupWMClass=ch.rosenweg4303.zutritt
+# Kategorie "Rosenweg" im Startmenue der Stationen (os-stationen 60-programme.sh)
+Categories=Office;Utility;
+Keywords=Rosenweg;

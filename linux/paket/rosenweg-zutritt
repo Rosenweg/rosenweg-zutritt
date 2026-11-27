@@ -1,0 +1,4 @@
+#!/bin/sh
+# Startet Rosenweg Zutritt aus /opt/rosenweg-zutritt (Flutter-Buendel sucht data/
+# und lib/ neben der echten Programmdatei; wie rosenweg-profil, rosenweg-vm).
+exec /opt/rosenweg-zutritt/rosenweg_zutritt "$@"

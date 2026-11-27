@@ -1,0 +1,37 @@
+name: rosenweg_zutritt
+description: "Rosenweg Zutritt – Türen, Access-Benutzer, Besucher-Pässe und Rosenweg-Karten verwalten; Zutritts- und Kartenprotokoll."
+publish_to: 'none'
+
+# version: x.y.z+Baunummer. Ein Merge auf main mit einer NEUEN Version (Tag
+# vx.y.z gibt es noch nicht) baut alle Plattformen und veroeffentlicht sie
+# (GitHub-Release, /apps). Unveraenderte Version = nur CI, kein Release.
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  # Gemeinsame Basis der Rosenweg-Apps: Anmeldung (Karte, QR, Konto, still per
+  # Kerberos), API, Gerüst (Handy/Desktop), Updater, Logo-Baukasten.
+  # Oeffentliches Repo: pub holt es ohne Token; lokal mit ../rosenweg-basis
+  # ueber pubspec_overrides.yaml (siehe README, "Entwickeln").
+  rosenweg_basis:
+    git:
+      url: https://github.com/Rosenweg/rosenweg-basis.git
+      # fester Tag (mit Updater und iOS-MainActor-Fix); neue Basis = neuer Tag
+      ref: v0.6.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  # Logo fuer Anmeldeschirm, "Über" und Titelleiste (assets/logo/erzeugen.sh)
+  assets:
+    - assets/logo/rosenweg-zutritt-512.png
+    - assets/logo/rosenweg-zutritt-klein.png

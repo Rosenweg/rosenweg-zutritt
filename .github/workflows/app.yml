@@ -1,0 +1,63 @@
+# Bau und Release fuer alle Plattformen - die Arbeit macht der wiederverwendbare
+# Workflow in rosenweg-basis (.github/workflows/app.yml, dort die Einzelheiten).
+#
+#   Pull Request          Linux (analyze, test, .deb) und Android (APK, Debug-
+#                         Signatur); Windows, macOS, iOS dazu, wenn das Repo
+#                         oeffentlich ist
+#   Merge auf main        dasselbe; ist die Version in pubspec.yaml NEU (Tag
+#                         vx.y.z gibt es noch nicht): GitHub-Release vx.y.z mit
+#                         Linux und Android; Windows, macOS, iOS kommen dazu,
+#                         sobald sie durch sind (scheitern sie, bleibt das
+#                         Release, der Text nennt, was fehlt), dann /apps (apps.yml)
+#   von Hand              alle Plattformen, ohne Release
+#
+# Runner: nur von GitHub gehostete (ubuntu-latest, windows-latest,
+# macos-latest), nie eigene. In einem privaten Repo kosten sie Minuten;
+# Windows, macOS und iOS laufen dort nur fuer ein Release oder von Hand.
+#
+# Secrets: die Org-Secrets ANDROID_KEYSTORE_BASE64/-PASSWORD und
+# ANDROID_KEY_ALIAS/-PASSWORD (fuer dieses Repo freigeben). Weitergereicht
+# werden sie nur bei Push auf main, nie bei einem Pull Request. rosenweg-basis
+# ist oeffentlich, pub holt sie ohne Token.
+name: App
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: app-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  app:
+    # Obergrenze fuer den wiederverwendbaren Workflow: dort hat nur der
+    # Release-Teil (nach Merge mit neuer Version) Schreibrechte.
+    permissions:
+      contents: write   # Release (nur nach Merge mit neuer Version)
+      actions: write    # apps.yml fuer den neuen Tag starten
+      packages: read    # commons-rosenweg aus GitHub Packages (Android)
+    uses: Rosenweg/rosenweg-basis/.github/workflows/app.yml@main
+    with:
+      app: rosenweg-zutritt
+      paket: ch.rosenweg4303.zutritt
+      titel: Rosenweg Zutritt
+      veroeffentlichen: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    # nur bei Push auf main; bei pull_request leer (Debug-Signatur)
+    secrets:
+      ANDROID_KEYSTORE_BASE64: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.ANDROID_KEYSTORE_BASE64 || '' }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.ANDROID_KEYSTORE_PASSWORD || '' }}
+      ANDROID_KEY_ALIAS: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.ANDROID_KEY_ALIAS || '' }}
+      ANDROID_KEY_PASSWORD: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.ANDROID_KEY_PASSWORD || '' }}
+      MACOS_ZERTIFIKAT_P12: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.MACOS_ZERTIFIKAT_P12 || '' }}
+      MACOS_ZERTIFIKAT_PASSWORT: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.MACOS_ZERTIFIKAT_PASSWORT || '' }}
+      NOTAR_KEY_P8: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.NOTAR_KEY_P8 || '' }}
+      NOTAR_KEY_ID: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.NOTAR_KEY_ID || '' }}
+      NOTAR_ISSUER: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.NOTAR_ISSUER || '' }}
+      WINDOWS_ZERTIFIKAT_PFX: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.WINDOWS_ZERTIFIKAT_PFX || '' }}
+      WINDOWS_ZERTIFIKAT_PASSWORT: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.WINDOWS_ZERTIFIKAT_PASSWORT || '' }}

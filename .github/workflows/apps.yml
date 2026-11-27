@@ -1,0 +1,24 @@
+# Release-Dateien an /apps schicken (www.rosenweg4303.ch/apps, Updater).
+# Startet app.yml nach einem neuen Release selbst; von Hand:
+#   gh workflow run apps.yml --ref v1.2.3
+# Arbeit: rosenweg-basis .github/workflows/app-apps.yml (GitHub-OIDC, kein Geheimnis).
+# Die Anlage nimmt das Repo erst an, wenn es im App-Register steht
+# (apps-eintrag.json -> Rosenweg/Website apps-register.json).
+name: An /apps
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  apps:
+    permissions:
+      contents: read
+      id-token: write   # OIDC-Token fuer /apps (kein Geheimnis)
+    uses: Rosenweg/rosenweg-basis/.github/workflows/app-apps.yml@main
+    with:
+      paket: ch.rosenweg4303.zutritt
