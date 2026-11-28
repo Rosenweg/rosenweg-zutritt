@@ -161,6 +161,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.8.4"
+  equatable:
+    dependency: transitive
+    description:
+      name: equatable
+      sha256: ea36e500cbf0ec18361deabca755434f73e42fe53c5130021c7e2d6b5ebe1702
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0"
+  event_bus:
+    dependency: transitive
+    description:
+      name: event_bus
+      sha256: "1a55e97923769c286d295240048fc180e7b0768902c3c2e869fe059aafa15304"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   fake_async:
     dependency: transitive
     description:
@@ -265,6 +281,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
+  fl_chart:
+    dependency: transitive
+    description:
+      name: fl_chart
+      sha256: "19e4b58179f77b0858ddb9f2db321394e466cba7b2b918b0af7abd79754a1de9"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.2"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -613,6 +637,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.5.0"
+  mqtt_client:
+    dependency: transitive
+    description:
+      name: mqtt_client
+      sha256: "11fec8318bf55ae66657091714233ff459264efdc11ce1d064b01f78348a6d88"
+      url: "https://pub.dev"
+    source: hosted
+    version: "10.14.0"
   native_toolchain_c:
     dependency: transitive
     description:
@@ -825,11 +857,11 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "v0.8.0"
-      resolved-ref: cb2ae801cd1edcf83507ed715b29af2bb73ee65c
+      ref: "v0.8.8"
+      resolved-ref: "79af9bd06494ec350a87cf149ff44f1c59b87403"
       url: "https://github.com/Rosenweg/rosenweg-basis.git"
     source: git
-    version: "0.8.0"
+    version: "0.8.8"
   rxdart:
     dependency: transitive
     description:
