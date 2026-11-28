@@ -26,6 +26,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      veroeffentlichen:
+        description: Release anlegen (nur der Runner-Waechter startet so, Zweig main)
+        type: boolean
+        default: false
 
 concurrency:
   group: app-${{ github.ref }}
@@ -47,19 +52,19 @@ jobs:
       app: rosenweg-zutritt
       paket: ch.rosenweg4303.zutritt
       titel: Rosenweg Zutritt
-      veroeffentlichen: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+      veroeffentlichen: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.veroeffentlichen)) }}
     # nur bei Push auf main; bei pull_request leer (Debug-Signatur)
     secrets:
-      ANDROID_KEYSTORE_BASE64: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.ANDROID_KEYSTORE_BASE64 || '' }}
-      ANDROID_KEYSTORE_PASSWORD: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.ANDROID_KEYSTORE_PASSWORD || '' }}
-      ANDROID_KEY_ALIAS: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.ANDROID_KEY_ALIAS || '' }}
-      ANDROID_KEY_PASSWORD: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.ANDROID_KEY_PASSWORD || '' }}
-      MACOS_ZERTIFIKAT_P12: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.MACOS_ZERTIFIKAT_P12 || '' }}
-      MACOS_ZERTIFIKAT_PASSWORT: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.MACOS_ZERTIFIKAT_PASSWORT || '' }}
-      NOTAR_KEY_P8: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.NOTAR_KEY_P8 || '' }}
-      NOTAR_KEY_ID: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.NOTAR_KEY_ID || '' }}
-      NOTAR_ISSUER: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.NOTAR_ISSUER || '' }}
-      WINDOWS_ZERTIFIKAT_PFX: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.WINDOWS_ZERTIFIKAT_PFX || '' }}
-      WINDOWS_ZERTIFIKAT_PASSWORT: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.WINDOWS_ZERTIFIKAT_PASSWORT || '' }}
+      ANDROID_KEYSTORE_BASE64: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.veroeffentlichen)) && secrets.ANDROID_KEYSTORE_BASE64 || '' }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.veroeffentlichen)) && secrets.ANDROID_KEYSTORE_PASSWORD || '' }}
+      ANDROID_KEY_ALIAS: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.veroeffentlichen)) && secrets.ANDROID_KEY_ALIAS || '' }}
+      ANDROID_KEY_PASSWORD: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.veroeffentlichen)) && secrets.ANDROID_KEY_PASSWORD || '' }}
+      MACOS_ZERTIFIKAT_P12: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.veroeffentlichen)) && secrets.MACOS_ZERTIFIKAT_P12 || '' }}
+      MACOS_ZERTIFIKAT_PASSWORT: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.veroeffentlichen)) && secrets.MACOS_ZERTIFIKAT_PASSWORT || '' }}
+      NOTAR_KEY_P8: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.veroeffentlichen)) && secrets.NOTAR_KEY_P8 || '' }}
+      NOTAR_KEY_ID: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.veroeffentlichen)) && secrets.NOTAR_KEY_ID || '' }}
+      NOTAR_ISSUER: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.veroeffentlichen)) && secrets.NOTAR_ISSUER || '' }}
+      WINDOWS_ZERTIFIKAT_PFX: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.veroeffentlichen)) && secrets.WINDOWS_ZERTIFIKAT_PFX || '' }}
+      WINDOWS_ZERTIFIKAT_PASSWORT: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.veroeffentlichen)) && secrets.WINDOWS_ZERTIFIKAT_PASSWORT || '' }}
       PAKETE_APP_ID: ${{ secrets.PAKETE_APP_ID }}
       PAKETE_APP_KEY: ${{ secrets.PAKETE_APP_KEY }}
