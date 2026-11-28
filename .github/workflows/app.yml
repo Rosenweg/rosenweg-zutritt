@@ -61,3 +61,5 @@ jobs:
       NOTAR_ISSUER: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.NOTAR_ISSUER || '' }}
       WINDOWS_ZERTIFIKAT_PFX: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.WINDOWS_ZERTIFIKAT_PFX || '' }}
       WINDOWS_ZERTIFIKAT_PASSWORT: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.WINDOWS_ZERTIFIKAT_PASSWORT || '' }}
+      PAKETE_APP_ID: ${{ secrets.PAKETE_APP_ID }}
+      PAKETE_APP_KEY: ${{ secrets.PAKETE_APP_KEY }}
