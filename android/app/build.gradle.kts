@@ -12,6 +12,8 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        // rosenweg_basis ab 0.8: flutter_local_notifications (Benachrichtigung) braucht es
+        isCoreLibraryDesugaringEnabled = true
     }
 
     defaultConfig {
@@ -60,4 +62,9 @@ kotlin {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    // Benachrichtigung (flutter_local_notifications) ueber rosenweg_basis
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
